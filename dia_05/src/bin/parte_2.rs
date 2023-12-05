@@ -4,23 +4,32 @@ struct Map {
     length: u64,
 }
 
-fn map_seed_to_location(seed: u64, map_vec: &Vec<Vec<Map>>) -> u64 {
-    let mut location: u64 = seed;
-
-    for maps in map_vec {
+fn map_location_to_seed(location: u64, map_vec: &Vec<Vec<Map>>) -> u64 {
+    let mut seed: u64 = location;
+    for maps in map_vec.iter().rev() {
         for map in maps {
             // println!("checking map d[{}] s[{}] l[{}]", map.dest, map.source, map.length);
-            if location >= map.source && location < (map.source + map.length) {
-                location = map.dest + (location - map.source);
+            if seed >= map.dest && seed < (map.dest + map.length) {
+                seed = map.source + (seed - map.dest);
                 // println!("found!");
                 break;
             }
         }
 
-        // println!("mapped to {}", location);
+        // println!("mapped to {}", seed);
     }
 
-    return location;
+    return seed;
+}
+
+fn is_seed_in_range(seed: u64, seeds_range: &Vec<u64>) -> bool {
+    for i in (0..seeds_range.len()).step_by(2) {
+        if seed >= seeds_range[i] && seed < (seeds_range[i] + seeds_range[i + 1]) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 fn main() {
@@ -32,7 +41,7 @@ fn main() {
 
     (seeds_line, maps_data) = input.split_once("\n").unwrap();
 
-    let seeds: Vec<u64> = seeds_line
+    let seeds_range: Vec<u64> = seeds_line
         .split_once(": ")
         .unwrap()
         .1
@@ -62,11 +71,16 @@ fn main() {
         maps.push(new_map);
     }
 
-    let min_location = seeds
-        .iter()
-        .map(|s| map_seed_to_location(*s, &maps))
-        .min()
-        .unwrap();
+    let mut min_location : u64 = 0;
+
+    loop {
+        let seed = map_location_to_seed(min_location, &maps);
+        if is_seed_in_range(seed, &seeds_range) {
+            break;
+        }
+        
+        min_location += 1;
+    }
 
     println!("{}", min_location);
 }
