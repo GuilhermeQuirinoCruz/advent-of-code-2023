@@ -36,17 +36,13 @@ fn main() {
     times = parse_numbers(input_times);
     distances = parse_numbers(input_distances);
 
-    let start = std::time::Instant::now();
-    
     let numbers_product: i32 = times
     .iter()
         .zip(distances)
         .map(|(time, distance)| {
-            let lower_bound = get_lower_bound(time, &distance);
-            time - (2 * lower_bound) + 1
+            time - (2 * get_lower_bound(time, &distance)) + 1
         })
         .product::<i32>();
     
-    println!("{}", start.elapsed().as_nanos());
     println!("{}", numbers_product);
 }
