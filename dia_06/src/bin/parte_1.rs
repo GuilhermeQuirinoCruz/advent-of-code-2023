@@ -9,28 +9,16 @@ fn parse_numbers(line: &str) -> Vec<i32> {
         .collect();
 }
 
-fn get_lower_bound(total_time: i32, record_distance: i32) -> i32 {
+fn get_lower_bound(total_time: &i32, record_distance: &i32) -> i32 {
     for time in 0..(total_time + 1) {
         let distance_traveled: i32 = (total_time - time) * time;
         // println!("time {}, dist {}", time, distance_traveled);
-        if distance_traveled > record_distance {
+        if distance_traveled > *record_distance {
             return time;
         }
     }
 
-    return total_time;
-}
-
-fn get_upper_bound(total_time: i32, record_distance: i32) -> i32 {
-    for time in (0..(total_time + 1)).rev() {
-        let distance_traveled: i32 = (total_time - time) * time;
-        // println!("time {}, dist {}", time, distance_traveled);
-        if distance_traveled > record_distance {
-            return time;
-        }
-    }
-
-    return total_time;
+    return *total_time;
 }
 
 fn main() {
@@ -48,14 +36,17 @@ fn main() {
     times = parse_numbers(input_times);
     distances = parse_numbers(input_distances);
 
-    let mut winning_ranges: Vec<i32> = Vec::new();
-
-    for i in 0..times.len() {
-        let range: i32 =
-            get_upper_bound(times[i], distances[i]) - get_lower_bound(times[i], distances[i]) + 1;
-
-        winning_ranges.push(range);
-    }
+    let start = std::time::Instant::now();
     
-    println!("{}", winning_ranges.iter().product::<i32>());
+    let numbers_product: i32 = times
+    .iter()
+        .zip(distances)
+        .map(|(time, distance)| {
+            let lower_bound = get_lower_bound(time, &distance);
+            time - (2 * lower_bound) + 1
+        })
+        .product::<i32>();
+    
+    println!("{}", start.elapsed().as_nanos());
+    println!("{}", numbers_product);
 }
