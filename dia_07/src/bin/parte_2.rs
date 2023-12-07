@@ -9,32 +9,39 @@ struct Game {
 }
 
 fn get_hand_type(hand: &str) -> char {
-    let card_count: HashMap<char, u32> = hand
+    let card_count: HashMap<char, i32> = hand
         .chars()
         .into_group_map_by(|&x| x)
         .into_iter()
-        .map(|(k, v)| (k, v.len() as u32))
+        .map(|(k, v)| (k, v.len() as i32))
         .collect();
 
-    return match card_count.keys().len() {
-        1 => 7,
+    let jokers: usize = if card_count.contains_key(&'J') { 1 } else { 0 };
+
+    return match card_count.keys().len() - jokers {
+        0 | 1 => 7,
         2 => {
             if card_count.values().contains(&4) {
-                6
+                6 + jokers
+            } else if card_count.values().contains(&3) {
+                5 + jokers
             } else {
-                5
+                if jokers > 0 && *card_count.get(&'J').unwrap() == 2 {
+                    6
+                } else {
+                    4 + jokers
+                }
             }
         }
         3 => {
             if card_count.values().contains(&3) {
-                4
+                4 + jokers
             } else {
-                3
+                3 + jokers
             }
         }
         4 => 2,
-        5 => 1,
-        _ => 0,
+        5 | _ => 1,
     }
     .to_string()
     .chars()
@@ -43,7 +50,7 @@ fn get_hand_type(hand: &str) -> char {
 }
 
 fn get_hand_score(hand: &str) -> u64 {
-    let labels: String = "23456789TJQKA".to_string();
+    let labels: String = "J23456789TQKA".to_string();
     let mut score: String = "".to_string();
 
     score.push(get_hand_type(hand));
@@ -59,6 +66,7 @@ fn get_hand_score(hand: &str) -> u64 {
 
 fn main() {
     // let input: &str = include_str!("./exemplo_1.txt");
+    // let input: &str = include_str!("./teste.txt");
     let input: &str = include_str!("./input.txt");
 
     let mut games: Vec<Game> = input
@@ -82,6 +90,7 @@ fn main() {
     let sum: i32 = games
         .iter()
         .map(|game| {
+            // println!("hand {}, score {}", game.hand, game.score);
             i += 1;
             game.bid * i
         })
