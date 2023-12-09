@@ -24,12 +24,12 @@ fn main() {
     let instructions: usize = lr_instructions.len();
     let mut current_node: &str = "AAA";
     loop {
-        let direction: char = lr_instructions.chars().nth(steps % instructions).unwrap();
         let (left, right) = nodes.get(current_node).unwrap();
-        println!(
-            "step {}, node {}, l/r {}/{}, dir {}",
-            steps, current_node, left, right, direction
-        );
+        let direction: char = lr_instructions.chars().nth(steps % instructions).unwrap();
+        // println!(
+        //     "step {}, node {}, l/r {}/{}, dir {}",
+        //     steps, current_node, left, right, direction
+        // );
         if direction == 'L' {
             current_node = left;
         } else {
