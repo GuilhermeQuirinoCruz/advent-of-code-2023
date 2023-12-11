@@ -9,7 +9,7 @@ fn count_empty_lines_between(mut a: u32, mut b: u32, lines: &Vec<u32>) -> u32 {
         (a, b) = (b, a);
     }
 
-    return lines.iter().filter(|i| **i > a && **i < b).count() as u32;
+    return (lines.iter().filter(|i| **i > a && **i < b).count() as u32) * 999999;
 }
 
 fn distance_between_galaxies(
@@ -57,10 +57,10 @@ fn main() {
         }
     }
 
-    let mut sum: u32 = 0;
+    let mut sum: u64 = 0;
     for i in 0..galaxies.len() - 1 {
         for i2 in (i + 1)..galaxies.len() {
-            sum += distance_between_galaxies(&galaxies[i], &galaxies[i2], &empty_rows, &empty_columns);
+            sum += distance_between_galaxies(&galaxies[i], &galaxies[i2], &empty_rows, &empty_columns) as u64;
         }
     }
 
