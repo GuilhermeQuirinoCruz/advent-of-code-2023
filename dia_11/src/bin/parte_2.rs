@@ -18,10 +18,10 @@ fn distance_between_galaxies(
     empty_rows: &Vec<u32>,
     empty_columns: &Vec<u32>,
 ) -> u32 {
-    let x_distance = galaxy_2.x.abs_diff(galaxy_1.x)
+    let x_distance: u32 = galaxy_2.x.abs_diff(galaxy_1.x)
         + count_empty_lines_between(galaxy_1.x, galaxy_2.x, empty_columns);
 
-    let y_distance = galaxy_2.y.abs_diff(galaxy_1.y)
+    let y_distance: u32 = galaxy_2.y.abs_diff(galaxy_1.y)
         + count_empty_lines_between(galaxy_1.y, galaxy_2.y, empty_rows);
 
     return x_distance + y_distance;
@@ -32,7 +32,7 @@ fn main() {
     let input: &str = include_str!("./input.txt");
 
     let mut empty_rows: Vec<u32> = (1..input.lines().count() + 1).map(|n| n as u32).collect();
-    let mut empty_columns: Vec<u32> = (1..input.lines().clone().next().unwrap().len() + 1)
+    let mut empty_columns: Vec<u32> = (1..input.lines().next().unwrap().len() + 1)
         .map(|n| n as u32)
         .collect();
 
