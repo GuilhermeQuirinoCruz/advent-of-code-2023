@@ -18,10 +18,6 @@ fn main() {
     // let input: &str = include_str!("./exemplo_1.txt");
     let input: &str = include_str!("./input.txt");
 
-    // for str in input.split(",") {
-    //     println!("{}", get_hash(str));
-    // }
-
     let sum: u32 = input
         .split(",")
         .map(|str| get_hash(str))
