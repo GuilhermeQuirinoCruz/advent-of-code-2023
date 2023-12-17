@@ -6,27 +6,27 @@ fn main() {
 
     let total_rows: u32 = input.lines().count() as u32;
 
-    let mut r_rocks: HashSet<(u32, u32)> = HashSet::new();
-    let mut c_rocks: HashSet<(u32, u32)> = HashSet::new();
+    let mut rounded_rocks: HashSet<(u32, u32)> = HashSet::new();
+    let mut cube_rocks: HashSet<(u32, u32)> = HashSet::new();
     let mut rocks_after_slide: HashSet<(u32, u32)> = HashSet::new();
 
     for (y, line) in input.lines().enumerate() {
         for (x, c) in line.chars().enumerate() {
             if c == 'O' {
-                r_rocks.insert((x as u32, y as u32));
+                rounded_rocks.insert((x as u32, y as u32));
             } else if c == '#' {
-                c_rocks.insert((x as u32, y as u32));
+                cube_rocks.insert((x as u32, y as u32));
             }
         }
     }
 
-    for (x, mut y) in &r_rocks {
+    for (x, mut y) in &rounded_rocks {
         let mut rocks_found: u32 = 0;
 
-        while y > 0 && !c_rocks.contains(&(*x, y - 1)) {
+        while y > 0 && !cube_rocks.contains(&(*x, y - 1)) {
             y -= 1;
 
-            if r_rocks.contains(&(*x, y)) {
+            if rounded_rocks.contains(&(*x, y)) {
                 rocks_found += 1;
             }
         }
