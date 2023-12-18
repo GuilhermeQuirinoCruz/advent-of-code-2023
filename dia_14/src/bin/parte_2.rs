@@ -75,21 +75,21 @@ fn spin_cycle(
     return rocks_after_cycle;
 }
 
-fn print_rocks(
-    rounded_rocks: &HashSet<(i32, i32)>,
-    cube_rocks: &HashSet<(i32, i32)>,
-    limits: (i32, i32),
-) {
-    let rocks: String = rocks_to_string(rounded_rocks, cube_rocks, limits);
-    for (i, c) in rocks.char_indices() {
-        if i > 0 && i as i32 % limits.0 == 0 {
-            println!("");
-        }
-        print!("{}", c);
-    }
+// fn print_rocks(
+//     rounded_rocks: &HashSet<(i32, i32)>,
+//     cube_rocks: &HashSet<(i32, i32)>,
+//     limits: (i32, i32),
+// ) {
+//     let rocks: String = rocks_to_string(rounded_rocks, cube_rocks, limits);
+//     for (i, c) in rocks.char_indices() {
+//         if i > 0 && i as i32 % limits.0 == 0 {
+//             println!("");
+//         }
+//         print!("{}", c);
+//     }
 
-    println!("");
-}
+//     println!("");
+// }
 
 fn rocks_to_string(
     rounded_rocks: &HashSet<(i32, i32)>,
@@ -113,8 +113,8 @@ fn rocks_to_string(
 }
 
 fn main() {
-    let input: &str = include_str!("./exemplo_1.txt");
-    // let input: &str = include_str!("./input.txt");
+    // let input: &str = include_str!("./exemplo_1.txt");
+    let input: &str = include_str!("./input.txt");
 
     let total_rows: i32 = input.lines().count() as i32;
     let total_columns: i32 = input.lines().next().unwrap().len() as i32;
@@ -136,8 +136,8 @@ fn main() {
 
     let mut rocks: HashSet<(i32, i32)> = HashSet::from(rounded_rocks);
     let mut maps: Vec<String> = Vec::new();
-    let mut start: usize = 0;
-    let mut end: usize = 0;
+    let start: usize;
+    let end: usize;
 
     loop {
         rocks = spin_cycle(&rocks, &cube_rocks, limits);
