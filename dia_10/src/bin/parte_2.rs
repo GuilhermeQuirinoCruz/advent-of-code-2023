@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug)]
 struct Pipe {
@@ -35,19 +35,75 @@ fn get_pipe_connections(tile: char, position: Position) -> Vec<Position> {
     ]);
 }
 
+fn print_pipes(pipes: &HashSet<Position>, limit_x: i32, limit_y: i32) {
+    for y in 0..limit_y {
+        for x in 0..limit_x {
+            if pipes.contains(&Position { x, y }) {
+                print!("#");
+            } else {
+                print!(".");
+            }
+        }
+        println!("");
+    }
+}
+
+fn flood_fill_count(doubled_pipes: HashSet<Position>) -> usize {
+    let limit_x: i32 = doubled_pipes.iter().map(|pipe| pipe.x).max().unwrap() + 1;
+    let limit_y: i32 = doubled_pipes.iter().map(|pipe| pipe.y).max().unwrap() + 1;
+
+    let mut fill_positions: HashSet<Position> = HashSet::new();
+    let mut next_positions: Vec<Position> = vec![Position { x: 1, y: 1 }];
+    while next_positions.len() > 0 {
+        let current_position: Position = next_positions.pop().unwrap();
+        fill_positions.insert(current_position);
+
+        for (add_x, add_y) in [-1, 1, 0, 0].iter().zip([0, 0, -1, 1].iter()) {
+            let x: i32 = current_position.x + add_x;
+            let y: i32 = current_position.y + add_y;
+
+            if x < 1 || x > limit_x || y < 1 || y > limit_y {
+                continue;
+            }
+
+            let position: Position = Position { x, y };
+            if !doubled_pipes.contains(&position) && !fill_positions.contains(&position) {
+                next_positions.push(position);
+            }
+        }
+    }
+
+    let mut enclosed_positions: HashSet<Position> = HashSet::new();
+    for x in 1..(limit_x + 1) {
+        for y in 1..(limit_y + 1) {
+            if x % 2 != 0 || y % 2 != 0 {
+                continue;
+            }
+
+            let position: Position = Position { x, y };
+            // println!("{:?}", position);
+            if doubled_pipes.contains(&position) || fill_positions.contains(&position) {
+                continue;
+            }
+
+            enclosed_positions.insert(position);
+        }
+    }
+
+    // print_pipes(&doubled_pipes, limit_x, limit_y);
+
+    return enclosed_positions.len();
+}
+
 fn main() {
     // let input: &str = include_str!("./exemplo_1.txt");
     // let input: &str = include_str!("./exemplo_2.txt");
+    // let input: &str = include_str!("./exemplo_3.txt");
+    // let input: &str = include_str!("./exemplo_4.txt");
     let input: &str = include_str!("./input.txt");
 
     let mut pipes: HashMap<Position, Pipe> = HashMap::new();
     let mut starting_position: Position = Position { x: 0, y: 0 };
-
-    // pipes = HashMap::from_iter(input
-    //     .lines()
-    //     .zip(0..input.lines().count())
-    //     .map(|(line, y)| line.chars().zip(0..line.len()))
-    //     .map(|(c, x)| y));
 
     for (line, y) in input.lines().zip(1..input.lines().count() + 1) {
         for (tile, x) in line.chars().zip(1..line.len() + 1) {
@@ -59,7 +115,7 @@ fn main() {
                 x: x as i32,
                 y: y as i32,
             };
-            
+
             pipes.insert(
                 position,
                 Pipe {
@@ -107,6 +163,8 @@ fn main() {
     let mut main_loop: Vec<Position> = Vec::new();
     main_loop.push(starting_position);
 
+    let mut doubled_pipes: HashSet<Position> = HashSet::new();
+
     while main_loop.len() < 2 || current_position != starting_position {
         for position in pipes.get(&current_position).unwrap().connections.clone() {
             if position != previous_position {
@@ -117,18 +175,23 @@ fn main() {
         }
 
         main_loop.push(current_position);
-    }
-    
-    let mut junk_pipes: Vec<Position> = Vec::new();
-    for position in pipes.keys() {
-        if !main_loop.contains(position) {
-            junk_pipes.push(*position);
+
+        let doubled_position: Position = Position {
+            x: current_position.x * 2,
+            y: current_position.y * 2,
+        };
+
+        for position in pipes.get(&current_position).unwrap().connections.clone() {
+            doubled_pipes.insert(Position {
+                x: doubled_position.x + (position.x - current_position.x),
+                y: doubled_position.y + (position.y - current_position.y),
+            });
+
+            doubled_pipes.insert(doubled_position);
         }
     }
 
-    for position in junk_pipes {
-        pipes.remove(&position);
-    }
+    pipes.retain(|pipe, _| main_loop.contains(pipe));
 
-    println!("{}", pipes.len());
+    println!("{:?}", flood_fill_count(doubled_pipes));
 }
