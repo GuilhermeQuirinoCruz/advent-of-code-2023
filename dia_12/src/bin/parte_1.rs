@@ -1,16 +1,29 @@
+#[derive(Debug)]
+struct Spring {
+    condition_record: String,
+    groups: Vec<u32>,
+}
+
+fn count_damaged_springs_group(springs: &str) {
+    let a = springs.split(".").count();
+    println!("{}", a);
+}
+
 fn main() {
     let input: &str = include_str!("./exemplo_1.txt");
     // let input: &str = include_str!("./input.txt");
 
-    let spring_size = input
+    let springs: Vec<Spring> = input
         .lines()
-        .map(|l| l.split_whitespace().next().unwrap())
-        .map(|springs| springs.matches("?").count())
-        .collect::<Vec<usize>>();
+        .map(|line| line.split_once(" ").unwrap())
+        .map(|(condition, groups)| Spring {
+            condition_record: condition.to_string(),
+            groups: groups
+                .split(",")
+                .map(|n| n.parse::<u32>().unwrap())
+                .collect(),
+        })
+        .collect();
 
-    println!(
-        "min {:?}, max {:?}",
-        spring_size.iter().min().unwrap(),
-        spring_size.iter().max().unwrap()
-    );
+    println!("{:?}", springs);
 }
