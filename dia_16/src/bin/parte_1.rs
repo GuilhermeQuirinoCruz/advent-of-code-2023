@@ -46,6 +46,10 @@ fn main() {
         }
         
         while is_position_valid(beam.position.0, beam.position.1, limit_x, limit_y) {
+            if beam_history.contains(&beam) {
+                break;
+            }
+            
             beam_history.insert(beam.clone());
             energized.insert(beam.position);
 
