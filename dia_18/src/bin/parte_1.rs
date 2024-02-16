@@ -49,8 +49,6 @@ fn flood_fill_count(lagoon: &HashSet<(i32, i32)>) -> i32 {
     let limits_x: (i32, i32) = (iter_x.clone().min().unwrap() - 1, iter_x.max().unwrap() + 1);
     let limits_y: (i32, i32) = (iter_y.clone().min().unwrap() - 1, iter_y.max().unwrap() + 1);
 
-    // println!("limits {:?} {:?}", limits_x, limits_y);
-
     let mut flood_fill_positions: HashSet<(i32, i32)> = HashSet::new();
     let mut current_position: (i32, i32) = (limits_x.0, limits_y.0);
     flood_fill_positions.insert(current_position);
@@ -59,14 +57,11 @@ fn flood_fill_count(lagoon: &HashSet<(i32, i32)>) -> i32 {
     let directions: Vec<(i32, i32)> = vec![(0, -1), (0, 1), (-1, 0), (1, 0)];
 
     loop {
-        // println!("current {:?}", current_position);
         for direction in &directions {
             let position: (i32, i32) = (
                 current_position.0 + direction.0,
                 current_position.1 + direction.1,
             );
-
-            // println!("checking {:?}", position);
 
             if is_position_valid(position, (limits_x, limits_y))
                 && !lagoon.contains(&position)
@@ -74,28 +69,17 @@ fn flood_fill_count(lagoon: &HashSet<(i32, i32)>) -> i32 {
             {
                 flood_fill_positions.insert(position);
                 next_positions.push(position);
-
-                // println!("valid");
-            } else {
-                // println!("invalid");
             }
         }
 
         if next_positions.len() == 0 {
             break;
-        } else {
-            // println!("{:?}", next_positions);
-            // println!("");
         }
 
         current_position = next_positions.pop().unwrap();
     }
 
     let total_area: i32 = ((limits_x.1 - limits_x.0) + 1) * ((limits_y.1 - limits_y.0) + 1);
-
-    // println!("total area {}", total_area);
-    // println!("flood fill {:?}", flood_fill_positions);
-    // println!("len {:?}", flood_fill_positions.len());
 
     return total_area - flood_fill_positions.len() as i32;
 }
