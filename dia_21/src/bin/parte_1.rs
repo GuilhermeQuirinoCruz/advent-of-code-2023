@@ -32,25 +32,18 @@ fn main() {
         for plot in next_plots {
             for direction in &directions {
                 let position: (i32, i32) = (plot.0 + direction.0, plot.1 + direction.1);
-                // println!("checking {:?}", position);
 
                 if !(0..limits.0).contains(&position.0) || !(0..limits.1).contains(&position.1) {
-                    // println!("out of range");
                     continue;
                 }
 
                 if rocks.contains(&position) || garden_plots.contains(&position) {
-                    // println!("rocks or already in plots");
                     continue;
                 }
 
                 garden_plots.insert(position);
-                // println!("all good");
             }
         }
-
-        // println!("current plots {:?}", garden_plots);
-        // println!("");
     }
 
     println!("{}", garden_plots.len());
